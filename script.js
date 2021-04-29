@@ -25,7 +25,15 @@ const player = (sign) => {
 };
 
 const displayController = (() => {
-    const cellElements = document.querySelectorAll('.cell')
+    const cellElements = document.querySelectorAll('.cell');
+
+    cellElements.forEach((cell) =>
+        cell.addEventListener('click', (e) => {
+            if (e.target.textContent !== "") return;
+            gameLoop.gameRound(parseInt(e.target.dataset.index));
+            updateGameBoard();
+        })
+    );
 
     const updateGameBoard = () => {
         for (let i = 0; i < cellElements.length; i++) {
@@ -39,7 +47,18 @@ const displayController = (() => {
 const gameLoop = (() => {
     const player1 = player('X');
     const player2 = player('0');
+    let round = 1;
 
+    const gameRound = (index) => {
+        gameBoard.setCell(index, currentPlayer());
+        round++;
+    };
+
+    const currentPlayer = () => {
+        return round % 2 === 1 ? player1.getSign() : player2.getSign();
+    };
+
+    return {gameRound};
 })();
 
 function test() {
