@@ -34,7 +34,7 @@ const displayController = (() => {
 
     cellElements.forEach((cell) =>
         cell.addEventListener('click', (e) => {
-            if (e.target.textContent !== "") return;
+            if (e.target.textContent !== "" || gameLoop.checkGameOver()) return;
             gameLoop.gameRound(parseInt(e.target.dataset.index));
             updateGameBoard();
         })
@@ -59,12 +59,14 @@ const gameLoop = (() => {
     const player1 = player('X');
     const player2 = player('0');
     let round = 1;
+    let gameOver = false;
 
     const gameRound = (index) => {
         gameBoard.setCell(index, currentPlayer());
         if (winCheck(index)) {
             console.log(currentPlayer());
-            return
+            gameOver = true;
+            return;
         }
         round++;
     };
@@ -75,6 +77,7 @@ const gameLoop = (() => {
 
     const reset = () => {
         round = 1;
+        gameOver = false;
     };
 
     const winCheck = (index) => {
@@ -98,5 +101,9 @@ const gameLoop = (() => {
         );            
     };
 
-    return {gameRound, reset, winCheck};
+    const checkGameOver = () => {
+        return gameOver;
+    }
+
+    return {gameRound, reset, checkGameOver};
 })();
