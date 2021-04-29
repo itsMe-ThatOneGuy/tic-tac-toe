@@ -68,6 +68,11 @@ const gameLoop = (() => {
             gameOver = true;
             return;
         }
+        if (round === 9) {
+            console.log("draw");
+            gameOver = true;
+            return
+        }
         round++;
     };
 
