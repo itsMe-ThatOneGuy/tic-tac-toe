@@ -1,5 +1,3 @@
-"use strict";
-
 const gameBoard = (() => {
     const board = Array(9).fill("");
 
@@ -10,8 +8,14 @@ const gameBoard = (() => {
     const getCellIndex = (index) => {
         return board[index];
     };
+
+    const resetBoard = () => {
+        for (let i = 0; i < board.length; i++) {
+            board[i] = "";
+        }
+    };
     
-    return {setCell, board, getCellIndex}
+    return {setCell, getCellIndex, resetBoard}
 })();
 
 const player = (sign) => {
@@ -26,6 +30,7 @@ const player = (sign) => {
 
 const displayController = (() => {
     const cellElements = document.querySelectorAll('.cell');
+    const restartButton = document.querySelector('.restart-button');
 
     cellElements.forEach((cell) =>
         cell.addEventListener('click', (e) => {
@@ -34,6 +39,12 @@ const displayController = (() => {
             updateGameBoard();
         })
     );
+
+    restartButton.addEventListener('click', () => {
+        gameBoard.resetBoard();
+        gameLoop.reset();
+        updateGameBoard();
+    });
 
     const updateGameBoard = () => {
         for (let i = 0; i < cellElements.length; i++) {
@@ -58,7 +69,11 @@ const gameLoop = (() => {
         return round % 2 === 1 ? player1.getSign() : player2.getSign();
     };
 
-    return {gameRound};
+    const reset = () => {
+        round = 1;
+    };
+
+    return {gameRound, reset};
 })();
 
 function test() {
