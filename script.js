@@ -62,6 +62,10 @@ const gameLoop = (() => {
 
     const gameRound = (index) => {
         gameBoard.setCell(index, currentPlayer());
+        if (winCheck(index)) {
+            console.log(currentPlayer());
+            return
+        }
         round++;
     };
 
@@ -73,10 +77,26 @@ const gameLoop = (() => {
         round = 1;
     };
 
-    return {gameRound, reset};
-})();
+    const winCheck = (index) => {
+        const winConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6],
+        ];
+        
+        return winConditions
+            .filter((combo) => combo.includes(index))
+            .some((combos) => 
+            combos.every(
+                (index) => gameBoard.getCellIndex(index) === currentPlayer()
+            )
+        );            
+    };
 
-function test() {
-    gameBoard.setCell(prompt("Index: "), prompt("Sign: "));
-    displayController.updateGameBoard();
-}
+    return {gameRound, reset, winCheck};
+})();
