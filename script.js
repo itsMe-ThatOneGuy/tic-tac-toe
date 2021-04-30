@@ -31,28 +31,42 @@ const player = (sign) => {
 const displayController = (() => {
     const cellElements = document.querySelectorAll('.cell');
     const restartButton = document.querySelector('.restart-button');
+    const messageContainer = document.querySelector('.message-container');
 
     cellElements.forEach((cell) =>
         cell.addEventListener('click', (e) => {
             if (e.target.textContent !== "" || gameLoop.checkGameOver()) return;
             gameLoop.gameRound(parseInt(e.target.dataset.index));
-            updateGameBoard();
+            renderGameBoard();
         })
     );
 
     restartButton.addEventListener('click', () => {
         gameBoard.resetBoard();
         gameLoop.reset();
-        updateGameBoard();
+        renderGameBoard();
+        turnMessage(gameLoop.currentPlayer());
     });
 
-    const updateGameBoard = () => {
+    const renderGameBoard = () => {
         for (let i = 0; i < cellElements.length; i++) {
             cellElements[i].textContent = gameBoard.getCellIndex(i);
         }
     };
 
-    return {updateGameBoard};
+    const turnMessage = (player) => {
+        messageContainer.textContent = `${player}'s turn`;
+    };
+
+    const winMessage = (winner) => {
+        if (winner === "draw") {
+            messageContainer.textContent = "Draw"
+        } else {
+            messageContainer.textContent = `${winner} Wins!`    
+        }  
+    };
+
+    return {turnMessage, winMessage};
 })();
 
 const gameLoop = (() => {
@@ -64,16 +78,17 @@ const gameLoop = (() => {
     const gameRound = (index) => {
         gameBoard.setCell(index, currentPlayer());
         if (winCheck(index)) {
-            console.log(currentPlayer());
             gameOver = true;
+            displayController.winMessage(currentPlayer());
             return;
         }
         if (round === 9) {
-            console.log("draw");
             gameOver = true;
+            displayController.winMessage("draw");
             return
         }
         round++;
+        displayController.turnMessage(currentPlayer());
     };
 
     const currentPlayer = () => {
@@ -110,5 +125,5 @@ const gameLoop = (() => {
         return gameOver;
     }
 
-    return {gameRound, reset, checkGameOver};
+    return {gameRound, reset, checkGameOver, currentPlayer};
 })();
